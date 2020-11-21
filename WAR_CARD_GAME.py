@@ -37,6 +37,8 @@ def showDescAndRule():
     print("\t\t(5) If a player finishes their cards during a war without having enough")
     print("\t\tcards to finish the war then he loses immediately.")
 
+# Player class - a player should be able to hold instances of Cards,
+# they should also be able to remove and add them from their hand
 class Player:
     def __init__(self, name):
         self.name = name
@@ -54,6 +56,7 @@ class Player:
     def __str__(self):
         return self.name
 
+# Card class - creating a card deck by using global variables
 class Card:
     def __init__(self, name="", value=0):
         self.name = name
@@ -69,7 +72,9 @@ class Card:
     def __str__(self):
         return self.name
 
+# display the round and card table
 def displayRounds():
+
     # clear the console
     os.system("clear")
 
@@ -81,13 +86,16 @@ def displayRounds():
     print(f"  ROUND {rounds}  ".center(38, " "))
     print("\n")
 
+    # Show player names with the number of cards left in the hands
     print(f'{playerOne}({len(playerOne.playerDeck)})'.center(len(playerOneTableCard[-1].name), " ") + ' '*8
     + f'{playerTwo}({len(playerTwo.playerDeck)})'.center(len(playerTwoTableCard[-1].name), " "))
 
+    # Show cards which are on the table
     print("\n")
     print(f'{playerOneTableCard[-1]}' + 'VS'.center(8, " ") + f'{playerTwoTableCard[-1]}')
     print("\n")
 
+# Check if a player's deck empty
 def checkForEmptyDeck():
     if len(playerOne.playerDeck) == 0:
         print("\n")
@@ -104,20 +112,25 @@ def checkForEmptyDeck():
     else:
         return False
 
+# Check if there is a War - both player cards are equal
 def checkForWar():
     if playerOneTableCard[-1].value > playerTwoTableCard[-1].value:
         playerOne.addCard(playerOneTableCard)
         playerOne.addCard(playerTwoTableCard)
+
         #shuffle cards
         shuffle(playerOne.playerDeck)
+
         print(f"({playerOne} wins this round)".center(38, " "))
         return False
 
     elif playerTwoTableCard[-1].value > playerOneTableCard[-1].value:
         playerTwo.addCard(playerOneTableCard)
         playerTwo.addCard(playerTwoTableCard)
+
         #shuffle cards
         shuffle(playerTwo.playerDeck)
+
         print(f"({playerTwo} wins this round)".center(38, " "))
         return False
 
@@ -131,6 +144,7 @@ cardList = {'Two':2, 'Three':3, 'Four':4, 'Five':5, 'Six':6, 'Seven':7, 'Eight':
 rounds = 1
 gameOn = True
 
+# clear the console
 os.system("clear")
 
 # shows the name of a game at the top
@@ -139,15 +153,18 @@ showGameName()
 # shows game description and rules
 showDescAndRule()
 
-# put 5 seconds delay
+# put 5 seconds delay after showing game description and rules
 time.sleep(5)
 
 # Looping continue till players choose an option within range [1-4]
 while not validOption:
+
     # clear the console
     os.system("clear")
+
     # shows the name of a game at the top
     showGameName()
+
     # Show options for how to player wants to play
     print("\n")
     print(" \033[1mChoose Option\033[0m ".center(32, "*"))
@@ -155,8 +172,10 @@ while not validOption:
     print("1. Continue")
     print("2. Exit")
     print("\n")
+
     # get player choice
     playOption = input("[1-2] : ")
+
     # Check whether the player's input is a valid option or not
     if playOption.isdigit() and int(playOption) > 0 and int(playOption) < 5:
         playOption = int(playOption)
@@ -165,20 +184,25 @@ while not validOption:
 
 # check if choice is 1
 if playOption == 1:
+
+    # get first player name from user, default name is "Player One"
     playerOneName = input("\nEnter Player One name : ")
     if len(playerOneName) == 0:
         playerOne = Player("Player One")
     else:
         playerOne = Player(playerOneName)
 
+    # get second player name from user, default name is "Player Two"
     playerTwoName = input("\nEnter Player Two name : ")
     if len(playerTwoName) == 0:
         playerTwo = Player("Player Two")
     else:
         playerTwo = Player(playerTwoName)
+
     #create a deck of cards
     obj = Card()
     deckOfCard = obj.createCardDeck()
+
     #shuffle cards
     shuffle(deckOfCard)
 
@@ -187,19 +211,26 @@ if playOption == 1:
         playerOne.addCard(deckOfCard.pop(0))
         playerTwo.addCard(deckOfCard.pop(0))
 
+    # logic starts here
     while gameOn:
+
+        # create player table deck
         playerOneTableCard = []
         playerTwoTableCard = []
 
+        # check for player empty deck
         if checkForEmptyDeck():
             gameOn = False
             break
-
+        
+        # get one card from each player and put it on the table
         playerOneTableCard.append(playerOne.playerDeck.pop(0))
         playerTwoTableCard.append(playerTwo.playerDeck.pop(0))
 
+        #display each round information
         displayRounds()
 
+        # check if there is war coming
         if checkForWar():
             war = True
             while war:
@@ -224,7 +255,10 @@ if playOption == 1:
                     if not checkForWar():
                         war = False
 
+        # going for next round
         rounds += 1
+
+        # put 1.5 seconds delay after each round
         time.sleep(1.5)
 
 # check if choice is 2
